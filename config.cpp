@@ -18,7 +18,7 @@ Config Config::from_file(const std::filesystem::path& f) {
 std::ostream& operator<<(std::ostream& s, const Config& c) {
     s << "Run with " << c.nproc << " workers\n";
     s << "Report to " << c.report << "\n";
-    s << "Update each " << c.cycle_s << " second(s)\n";
+    s << "Update every " << c.cycle_s << " second(s)\n";
     s << "Jobs:\n";
     for (const auto& j : c.jobs) {
         s << "\t" << j << "\n";
