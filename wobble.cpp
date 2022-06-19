@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include <chrono>
 
 #include "Yaml.hpp"
 #include "config.h"
@@ -24,9 +25,10 @@ int main(int argc, char **argv) {
     rng.seed(rd());
 
     auto cfg = Config::from_file(argv[1]);
-    std::uniform_int_distribution<time_t> d(0, cfg.cycle_s);
+    std::uniform_int_distribution<int> d(0, cfg.cycle_s);
+    std::chrono::steady_clock clk;
     JobQueue q;
-    for (auto j : cfg.jobs) q.insert(Job::from_file(j), d(rng) + time(nullptr));
+    for (auto j : cfg.jobs) q.insert(Job::from_file(j), clk.now() + std::chrono::seconds(d(rng)));
 
     // TODO: main loop
     // TODO: limit parallelism

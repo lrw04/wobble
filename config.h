@@ -13,8 +13,7 @@
 
 struct Config {
     std::vector<std::filesystem::path> jobs;
-    int nproc;
-    time_t cycle_s;
+    int nproc, cycle_s;
     std::filesystem::path report;
 
     static Config from_file(const std::filesystem::path& f);

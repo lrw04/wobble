@@ -6,7 +6,7 @@ void JobQueue::clear() {
 
 int JobQueue::size() { return q.size(); }
 
-void JobQueue::insert(const Job& j, time_t t) { q.emplace(j, t); }
+void JobQueue::insert(const Job& j, sctime t) { q.emplace(j, t); }
 
 Job JobQueue::top() const { return q.top().job; }
 
