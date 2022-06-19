@@ -1,6 +1,6 @@
 VERSION = v0.0
 
-CXXFLAGS = -O2 -pipe -std=c++17 '-DVER="${VERSION}"'
+CXXFLAGS = -O2 -pipe -std=c++17 '-DVER="${VERSION}"' -Wall
 LDFLAGS = -pthread
 CXX = c++
 
