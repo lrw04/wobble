@@ -7,7 +7,7 @@ Config Config::from_file(const std::filesystem::path& f) {
     Config res;
     res.nproc = r["nproc"].As<int>();
     res.report = r["report"].As<std::string>();
-    res.cycle_s = r["cycle"].As<int>();
+    res.cycle_s = r["cycle"].As<time_t>();
     Yaml::Node& jobs = r["jobs"];
     for (auto it = jobs.Begin(); it != jobs.End(); it++) {
         res.jobs.push_back((*it).second.As<std::string>());
