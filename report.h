@@ -10,8 +10,8 @@
 
 #include "job.h"
 
-enum JobStatus { RUNNING, WAITING, SKIPPED };
-const std::vector<std::string> status_str = {"running", "waiting", "skipped"};
+enum JobStatus { RUNNING, WAITING, SKIPPED, FAILED };
+const std::vector<std::string> status_str = {"running", "waiting", "skipped", "failed"};
 
 struct JobEntry {
     Job job;

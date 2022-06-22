@@ -25,7 +25,7 @@ void JobQueue::pop() { q.pop(); }
 void JobQueue::reenter() {
     auto t = q.top();
     q.pop();
-    this->insert(t.job, t.t + std::chrono::seconds(c));
+    this->insert(t.job, t.t + std::chrono::seconds(t.job.cycle));
 }
 
 bool JobQueue::JobNode::operator<(const JobQueue::JobNode& rhs) const {

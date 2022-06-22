@@ -26,7 +26,7 @@ void run_job(Job job, Report& rep) {
 
 int main(int argc, char** argv) {
     // TODO: add logging
-    // TODO: handle SIGHUP on POSIX
+    // TODO: graceful exit
     if (argc != 2) USAGE();
 #undef USAGE
 
@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     std::vector<Job> jobs;
     for (auto j : cfg.jobs) jobs.push_back(Job::from_file(j));
     std::chrono::steady_clock clk;
-    JobQueue q(cfg.cycle_s);
+    JobQueue q(cfg.rand);
     for (auto j : jobs) q.insert(j, clk.now());
 
     std::vector<std::thread> ts;

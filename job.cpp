@@ -11,5 +11,6 @@ Job Job::from_file(std::filesystem::path c) {
     res.cfg = c;
     res.exe = r["exe"].As<std::string>();
     res.name = r["name"].As<std::string>();
+    res.cycle = r["cycle"].As<int>();
     return res;
 }
