@@ -3,7 +3,7 @@
 JobQueue::JobQueue(int cycle) {
     c = cycle;
     rng.seed(rd());
-    rdist = std::uniform_int_distribution<int>(0, c);
+    rdist = std::uniform_int_distribution<int>(0, c * 1000);
 }
 
 void JobQueue::clear() {
@@ -13,7 +13,7 @@ void JobQueue::clear() {
 int JobQueue::size() { return q.size(); }
 
 void JobQueue::insert(const Job& j, sctime t) {
-    q.push({j, t, std::chrono::seconds(rdist(rng))});
+    q.push({j, t, std::chrono::milliseconds(rdist(rng))});
 }
 
 std::pair<Job, sctime> JobQueue::top() const {

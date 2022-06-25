@@ -25,7 +25,7 @@ class JobQueue {
     struct JobNode {
         Job job;
         sctime t;
-        std::chrono::duration<int> d;
+        std::chrono::milliseconds d;
         bool operator<(const JobNode& rhs) const;
     };
     int c;

@@ -1,16 +1,16 @@
 #include "config.h"
-#include "Yaml.hpp"
+#include "json.hpp"
+#include "util.h"
 
 Config Config::from_file(const std::filesystem::path& f) {
-    Yaml::Node r;
-    Yaml::Parse(r, f.c_str()); // To make lib read the file
+    auto s = read_file(f);
+    auto r = nlohmann::json::parse(s);
     Config res;
-    res.nproc = r["nproc"].As<int>();
-    res.report = r["report"].As<std::string>();
-    res.rand = r["rand"].As<int>();
-    Yaml::Node& jobs = r["jobs"];
-    for (auto it = jobs.Begin(); it != jobs.End(); it++) {
-        res.jobs.push_back((*it).second.As<std::string>());
+    res.nproc = r.value("nproc", 1);
+    res.report = std::filesystem::path(r.at("report"));
+    res.rand = r.value("rand", 0);
+    for (auto j : r.at("jobs")) {
+        res.jobs.push_back(j);
     }
     return res;
 }

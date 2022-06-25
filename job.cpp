@@ -2,15 +2,16 @@
 
 #include <string>
 
-#include "Yaml.hpp"
+#include "json.hpp"
+#include "util.h"
 
-Job Job::from_file(std::filesystem::path c) {
-    Yaml::Node r;
-    Yaml::Parse(r, c.c_str());
+Job Job::from_file(const std::filesystem::path& c) {
+    auto s = read_file(c);
+    auto r = nlohmann::json::parse(s);
     Job res;
     res.cfg = c;
-    res.exe = r["exe"].As<std::string>();
-    res.name = r["name"].As<std::string>();
-    res.cycle = r["cycle"].As<int>();
+    res.exe = std::filesystem::path(r.at("exe"));
+    res.name = r.at("name");
+    res.cycle = r.at("cycle");
     return res;
 }

@@ -4,13 +4,16 @@
 #include <thread>
 #include <vector>
 
-#include "Yaml.hpp"
+#define FMT_HEADER_ONLY 1
+#include "fmt/format.h"
 #include "config.h"
 #include "job.h"
 #include "report.h"
 #include "schedule.h"
 
 void run_job(Job job, Report& rep) {
+    // TODO: maintain the running job
+    // TODO: add PID entry
     rep.update(job.name, JobStatus::RUNNING);
     std::cout << job.name << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(2));
