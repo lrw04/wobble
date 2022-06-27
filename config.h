@@ -5,11 +5,11 @@
 #define VER "master"
 #endif
 
-#include <filesystem>
 #include <ctime>
+#include <filesystem>
+#include <ostream>
 #include <string>
 #include <vector>
-#include <ostream>
 
 struct Config {
     std::vector<std::filesystem::path> jobs;

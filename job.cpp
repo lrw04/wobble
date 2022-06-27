@@ -1,8 +1,8 @@
 #include "job.h"
 
+#include <json.hpp>
 #include <string>
 
-#include "json.hpp"
 #include "util.h"
 
 Job Job::from_file(const std::filesystem::path& c) {

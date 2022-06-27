@@ -1,5 +1,7 @@
 #include "config.h"
-#include "json.hpp"
+
+#include <json.hpp>
+
 #include "util.h"
 
 Config Config::from_file(const std::filesystem::path& f) {

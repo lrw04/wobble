@@ -2,10 +2,11 @@
 
 #include <exception>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 #define FMT_HEADER_ONLY 1
-#include "fmt/format.h"
+#include <fmt/format.h>
 
 std::string read_file(const std::filesystem::path& p) {
     std::ifstream st(p);

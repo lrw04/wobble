@@ -1,11 +1,11 @@
 #ifndef SCHEDULE_H
 #define SCHEDULE_H
 
+#include <chrono>
 #include <ctime>
 #include <queue>
-#include <chrono>
-#include <utility>
 #include <random>
+#include <utility>
 
 #include "job.h"
 
