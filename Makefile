@@ -1,10 +1,10 @@
 VERSION = 0.0
 
-CXXFLAGS = -g -pipe -std=c++17 '-DVER="${VERSION}"' -Wall
+CXXFLAGS = -O2 -pipe -std=c++17 '-DVER="${VERSION}"' -Wall -I.
 LDFLAGS = -pthread
 CXX = c++
 
-SRC = config.cpp job.cpp report.cpp schedule.cpp wobble.cpp util.cpp
+SRC = config.cpp job.cpp report.cpp schedule.cpp wobble.cpp util.cpp process.cpp process_platform.cpp
 OBJ = ${SRC:.cpp=.o}
 
 all: wobble
