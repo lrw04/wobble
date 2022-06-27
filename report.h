@@ -11,12 +11,14 @@
 #include "job.h"
 
 enum JobStatus { RUNNING, WAITING, SKIPPED, FAILED };
-const std::vector<std::string> status_str = {"running", "waiting", "skipped", "failed"};
+const std::vector<std::string> status_str = {"running", "waiting", "skipped",
+                                             "failed"};
 
 struct JobEntry {
     Job job;
     JobStatus status;
     std::chrono::time_point<std::chrono::system_clock> update;
+    int pid, ret;
 };
 
 struct Report {
@@ -27,7 +29,7 @@ struct Report {
 
     Report(const std::filesystem::path& p);
     void reg(const Job& job);
-    void update(const std::string& name, JobStatus st);
+    void update(const std::string& name, JobStatus st, int p, int ret);
     void clear();
 };
 
