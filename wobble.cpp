@@ -5,19 +5,27 @@
 #include <vector>
 
 #define FMT_HEADER_ONLY 1
-#include "fmt/format.h"
 #include "config.h"
+#include "fmt/format.h"
 #include "job.h"
+#include "process.hpp"
 #include "report.h"
 #include "schedule.h"
 
 void run_job(Job job, Report& rep) {
-    // TODO: maintain the running job
-    // TODO: add PID entry
-    rep.update(job.name, JobStatus::RUNNING);
-    std::cout << job.name << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    rep.update(job.name, JobStatus::WAITING);
+    // run job.exec with argument job.cfg
+    TinyProcessLib::Process proc(
+        std::vector<std::string>{job.exe.string(), job.cfg.string()},
+        job.cfg.parent_path().string(),
+        [](const char* bytes, size_t n) {
+            // TODO: logging stdout
+        },
+        [](const char* bytes, size_t n) {
+            // TODO: logging stderr
+        });
+    rep.update(job.name, JobStatus::RUNNING, proc.get_id(), -1);
+    auto sta = proc.get_exit_status();
+    rep.update(job.name, sta ? JobStatus::FAILED : JobStatus::WAITING, -1, sta);
 }
 
 #define USAGE()                                                        \
@@ -35,13 +43,16 @@ int main(int argc, char** argv) {
 
     auto cfg = Config::from_file(argv[1]);
     std::vector<Job> jobs;
-    for (auto j : cfg.jobs) jobs.push_back(Job::from_file(j));
+    for (auto j : cfg.jobs)
+        jobs.push_back(
+            Job::from_file(std::filesystem::path(argv[1]).parent_path() / j));
     std::chrono::steady_clock clk;
     JobQueue q(cfg.rand);
     for (auto j : jobs) q.insert(j, clk.now());
 
     std::vector<std::thread> ts;
-    Report r(cfg.report);
+    Report r(std::filesystem::absolute(
+        std::filesystem::path(argv[1]).parent_path() / cfg.report));
     for (auto j : jobs) r.reg(j);
 
     while (true) {
@@ -60,7 +71,7 @@ int main(int argc, char** argv) {
         q.reenter();
         if (ts.size() == (std::size_t)cfg.nproc) {
             // skip
-            r.update(j.name, JobStatus::SKIPPED);
+            r.update(j.name, JobStatus::SKIPPED, -1, -1);
             continue;
         }
         // run
