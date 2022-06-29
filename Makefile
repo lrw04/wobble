@@ -15,7 +15,10 @@ all: wobble
 wobble: ${OBJ}
 	${CXX} -o $@ ${OBJ} ${LDFLAGS}
 
-clean:
-	rm -f wobble ${OBJ}
+clean: clean-intermediate
+	rm -f wobble
 
-.PHONY: all clean
+clean-intermediate:
+	rm -f ${OBJ}
+
+.PHONY: all clean clean-intermediate
