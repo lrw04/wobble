@@ -5,8 +5,9 @@
 #include <vector>
 
 #define FMT_HEADER_ONLY 1
+#include <fmt/format.h>
+
 #include "config.h"
-#include "fmt/format.h"
 #include "job.h"
 #include "process.hpp"
 #include "report.h"
