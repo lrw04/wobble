@@ -1,16 +1,29 @@
 VERSION = 0.0
 
-CXXFLAGS = -O2 -pipe -std=c++17 '-DVER="${VERSION}"' -Wall -I.
+CXXFLAGS = -O2 -pipe -std=c++17 '-DVER="${VERSION}"' -Wall -Iinclude
 LDFLAGS = -pthread
 CXX = c++
 
-SRC = config.cpp job.cpp report.cpp schedule.cpp wobble.cpp util.cpp process.cpp process_platform.cpp
-OBJ = ${SRC:.cpp=.o}
+# ifneq (,$(shell uname | grep -i mingw))
+ifeq ($(OS),Windows_NT)
+LDFLAGS += -lole32
+else
+ifeq ($(shell uname -s),Linux)
+LDFLAGS += -ldl
+endif
+endif
+
+OBJ = config.o job.o process_platform.o report.o schedule.o util.o wobble.o\
+      date/tz.o tiny-process-library/process.o loguru/loguru.o fmt/format.o\
+      fmt/os.o
 
 all: wobble
 
-.cpp.o:
-	${CXX} -c ${CXXFLAGS} $<
+%.o: %.cpp
+	${CXX} -c ${CXXFLAGS} $< -o $@
+
+%.o: %.cc
+	${CXX} -c ${CXXFLAGS} $< -o $@
 
 wobble: ${OBJ}
 	${CXX} -o $@ ${OBJ} ${LDFLAGS}
