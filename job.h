@@ -3,11 +3,15 @@
 
 #include <filesystem>
 #include <string>
+#include <vector>
 
 struct Job {
-    std::filesystem::path exe, cfg;
+    std::string exe;
+    std::filesystem::path cfg;
     std::string name;
     int cycle;
+    std::vector<std::string> args;
+    bool use_args;
     static Job from_file(const std::filesystem::path& c);
 };
 
