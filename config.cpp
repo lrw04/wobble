@@ -17,7 +17,7 @@ Config Config::from_file(const std::filesystem::path& f) {
     nlohmann::json r;
     try {
         s = read_file(f);
-        r = nlohmann::json::parse(s);
+        r = nlohmann::json::parse(s, nullptr, true, true);
     } catch (const std::exception& e) {
         ABORT_F("Failed to read configuration: %s", e.what());
     }
