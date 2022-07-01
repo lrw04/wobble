@@ -16,10 +16,17 @@
 
 void run_job(Job job, Report& rep) {
     loguru::set_thread_name((job.name + " runner").c_str());
+    LOG_F(INFO, "Started job %s", job.name.c_str());
     // run job.exec with argument job.cfg
+    std::vector<std::string> cmdline = {job.exe};
+    if (job.use_args) {
+        for (const auto& arg : job.args) cmdline.push_back(arg);
+    } else {
+        cmdline.push_back(job.cfg.string());
+    }
+
     TinyProcessLib::Process proc(
-        std::vector<std::string>{job.exe.string(), job.cfg.string()},
-        job.cfg.parent_path().string(),
+        cmdline, job.cfg.parent_path().string(),
         [](const char* bytes, size_t n) {
             LOG_F(INFO, "message from process stdout: %s",
                   std::string(bytes, n).c_str());
@@ -43,18 +50,25 @@ int main(int argc, char** argv) {
     // TODO: graceful exit
 
     loguru::init(argc, argv);
-    argagg::parser arg{{
-        {"config", {"-c", "--config"}, "path to config file", 1},
-    }};
+    argagg::parser arg{{}};
     argagg::parser_results argr;
     try {
         argr = arg.parse(argc, argv);
     } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-        return EXIT_FAILURE;
+        ABORT_F("Invalid argument: %s", e.what());
     }
 
-    auto cfg_f = argr["config"].as<std::string>();
+    if (argr.pos.size() > 1) {
+        fmt::print("Usage: {} CONFIG\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    std::string cfg_f;
+    if (argr.pos.size()) {
+        cfg_f = argr.pos[0];
+    } else {
+        LOG_F(WARNING, "Defaulting to config file config.json");
+        cfg_f = "config.json";
+    }
     auto cfg = Config::from_file(cfg_f);
     if (cfg.do_log_file)
         loguru::add_file(cfg.logs.string().c_str(), loguru::Append,
@@ -65,7 +79,7 @@ int main(int argc, char** argv) {
     for (auto j : cfg.jobs) jobs.push_back(Job::from_file(j));
     std::chrono::steady_clock clk;
     JobQueue q(cfg.rand);
-    for (auto j : jobs) q.insert(j, clk.now());
+    for (const auto& j : jobs) q.insert(j, clk.now());
 
     std::vector<std::thread> ts;
     Report r(cfg.report);
@@ -92,7 +106,6 @@ int main(int argc, char** argv) {
             continue;
         }
         // run
-        LOG_F(INFO, "Started job %s", j.name.c_str());
         ts.emplace_back(run_job, j, std::ref(r));
         ts.back().detach();
     }
