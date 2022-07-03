@@ -15,10 +15,14 @@ FetchContent_Declare(fmt GIT_REPOSITORY
     GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG 8.1.1)
 FetchContent_MakeAvailable(fmt)
 add_subdirectory(loguru)
-add_subdirectory(tiny-process-library)
+FetchContent_Declare(proc GIT_REPOSITORY
+    https://gitlab.com/eidheim/tiny-process-library
+    GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG master)
+FetchContent_MakeAvailable(proc)
 
 add_executable(wobble config.cpp job.cpp report.cpp schedule.cpp util.cpp wobble.cpp)
-target_link_libraries(wobble argagg date fmt::fmt nlohmann_json::nlohmann_json loguru tiny-process-library)
+target_link_libraries(wobble argagg date fmt::fmt
+    nlohmann_json::nlohmann_json loguru tiny-process-library::tiny-process-library)
 
 # The following is unnecessary as CMake will link ole32 automatically
 # if(WIN32)
