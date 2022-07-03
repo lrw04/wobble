@@ -1,37 +1,12 @@
-VERSION = 0.0
+BUILD_TYPE := Debug
 
-CXXFLAGS = -O2 -pipe -std=c++17 '-DVER="${VERSION}"' -Wall -Iinclude
-LDFLAGS = -pthread
-CXX = c++
+all: configure
+	cmake --build build
 
-# ifneq (,$(shell uname | grep -i mingw))
-ifeq ($(OS),Windows_NT)
-LDFLAGS += -lole32
-else
-ifeq ($(shell uname -s),Linux)
-LDFLAGS += -ldl
-endif
-endif
+configure:
+	cmake -B build -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
 
-OBJ = config.o job.o process_platform.o report.o schedule.o util.o wobble.o\
-      date/tz.o tiny-process-library/process.o loguru/loguru.o fmt/format.o\
-      fmt/os.o
+clean:
+	rm -rf build
 
-all: wobble
-
-%.o: %.cpp
-	${CXX} -c ${CXXFLAGS} $< -o $@
-
-%.o: %.cc
-	${CXX} -c ${CXXFLAGS} $< -o $@
-
-wobble: ${OBJ}
-	${CXX} -o $@ ${OBJ} ${LDFLAGS}
-
-clean: clean-intermediate
-	rm -f wobble
-
-clean-intermediate:
-	rm -f ${OBJ}
-
-.PHONY: all clean clean-intermediate
+.PHONY: all configure clean
