@@ -1,4 +1,6 @@
+#ifdef _WIN32
 #include <share.h>
+#endif
 
 #if defined(__GNUC__) || defined(__clang__)
 // Disable all warnings from gcc/clang:
