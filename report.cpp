@@ -4,8 +4,8 @@
 #include <date/tz.h>
 #include <fmt/format.h>
 
-#include <json.hpp>
 #include <loguru.hpp>
+#include <nlohmann/json.hpp>
 #include <sstream>
 #include <stdexcept>
 

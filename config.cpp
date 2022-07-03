@@ -1,8 +1,8 @@
 #include "config.h"
 
-#include <json.hpp>
-#include <unordered_map>
+#include <nlohmann/json.hpp>
 #include <thread>
+#include <unordered_map>
 
 #include "util.h"
 

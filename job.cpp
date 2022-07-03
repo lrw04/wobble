@@ -1,7 +1,7 @@
 #include "job.h"
 
-#include <json.hpp>
 #include <loguru.hpp>
+#include <nlohmann/json.hpp>
 #include <string>
 
 #include "util.h"
