@@ -22,7 +22,7 @@ licensed under MIT
 - [loguru](https://github.com/emilk/loguru) master in /loguru
 in public domain, changed
 
-and the following will be fetch during configuration:
+and the following will be fetched during configuration:
 
 - [fmtlib](https://github.com/fmtlib/fmt) 8.1.1 licensed under MIT
 - [nlohmann/json](https://github.com/nlohmann/json) 3.10.5
