@@ -16,13 +16,16 @@ to be installed in ~/Downloads with timezone mapping from
 The program is licensed under the MIT License. The codebase also includes these
 opensource projects in-tree:
 
-- [fmtlib](https://github.com/fmtlib/fmt) 8.1.1 in /fmt licensed under MIT
+- [argagg](https://github.com/vietjtnguyen/argagg) 0.4.6 in /argagg licensed under MIT
 - [date.h](https://github.com/HowardHinnant/date) 3.0.1 in /date
 licensed under MIT
-- [nlohmann/json](https://github.com/nlohmann/json) 3.10.5 in /json
-licensed under MIT
-- [tiny-process-library](https://gitlab.com/eidheim/tiny-process-library) 2.0.4 in
-/tiny-process-library licensed under MIT
-- [argagg](https://github.com/vietjtnguyen/argagg) 0.4.6 in /argagg licensed under MIT
 - [loguru](https://github.com/emilk/loguru) master in /loguru
 in public domain, changed
+
+and the following will be fetch during configuration:
+
+- [fmtlib](https://github.com/fmtlib/fmt) 8.1.1 licensed under MIT
+- [nlohmann/json](https://github.com/nlohmann/json) 3.10.5
+licensed under MIT
+- [tiny-process-library](https://gitlab.com/eidheim/tiny-process-library) 2.0.4
+licensed under MIT
