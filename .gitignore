@@ -35,7 +35,7 @@
 /.vscode
 
 # Binary
-/wobble
+/build
 
 # Test config
 /test_config

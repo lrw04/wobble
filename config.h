@@ -1,10 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#ifndef VER
-#define VER "master"
-#endif
-
 #include <ctime>
 #include <filesystem>
 #include <ostream>

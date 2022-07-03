@@ -4,13 +4,13 @@
 #include <chrono>
 #include <iostream>
 #include <loguru.hpp>
+#include <process.hpp>
 #include <random>
 #include <thread>
 #include <vector>
 
 #include "config.h"
 #include "job.h"
-#include "process.hpp"
 #include "report.h"
 #include "schedule.h"
 
