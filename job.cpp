@@ -21,7 +21,7 @@ Job Job::from_file(const std::filesystem::path& c) {
     try {
         if (r.contains("rel")) {
             CHECK_F(r.at("rel").is_boolean(), "Expected boolean 'rel'");
-            if (r.at("rel")) res.exe = (c.parent_path() / r.at("exe")).string();
+            if (r.at("rel")) res.exe = std::filesystem::absolute((c.parent_path() / r.at("exe"))).string();
         } else {
             res.exe = r.at("exe");
         }
