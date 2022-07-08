@@ -4,8 +4,9 @@
 #include <chrono>
 #include <iostream>
 #include <loguru.hpp>
-#include <process.hpp>
 #include <random>
+#include <reproc++/drain.hpp>
+#include <reproc++/reproc.hpp>
 #include <thread>
 #include <vector>
 
@@ -14,35 +15,65 @@
 #include "report.h"
 #include "schedule.h"
 
+class reproc_log_sink {
+   public:
+    reproc_log_sink(const std::string& str) : str(str) {}
+    std::error_code operator()(reproc::stream stream, const uint8_t* buffer,
+                               std::size_t size) {
+        if (size) {
+            LOG_F(INFO, "message from %s: %s", str.c_str(),
+                  std::string(reinterpret_cast<const char*>(buffer),
+                              buffer[size - 1] == '\n' ? size - 1 : size)
+                      .c_str());
+        }
+        return {};
+    }
+
+   private:
+    std::string str;
+};
+
 void run_job(Job job, Report& rep) {
     loguru::set_thread_name((job.name + " runner").c_str());
     LOG_F(INFO, "Started job %s", job.name.c_str());
-    // run job.exec with argument job.cfg
+
+    // run job.exec with argument
+    reproc::options op;
+    op.working_directory = job.cfg.parent_path().string().c_str();
+    reproc::process proc;
     std::vector<std::string> cmdline = {job.exe};
     if (job.use_args) {
         for (const auto& arg : job.args) cmdline.push_back(arg);
     } else {
         cmdline.push_back(job.cfg.string());
     }
+    auto ec = proc.start(cmdline, op);
+    if (ec == std::errc::no_such_file_or_directory) {
+        LOG_F(ERROR, "Executable for job %s was not found", job.name.c_str());
+        rep.update(job.name, JobStatus::NF, -1, -1);
+        return;
+    }
+    ec = reproc::drain(proc, reproc_log_sink("stdout"),
+                       reproc_log_sink("stderr"));
+    if (ec) {
+        LOG_F(ERROR, "Failed to intercept streams: %s", ec.message().c_str());
+        rep.update(job.name, JobStatus::FAILED, -1, -1);
+        return;
+    }
 
-    TinyProcessLib::Process proc(
-        cmdline, job.cfg.parent_path().string(),
-        [](const char* bytes, size_t n) {
-            LOG_F(INFO, "message from process stdout: %s",
-                  std::string(bytes, n).c_str());
-        },
-        [](const char* bytes, size_t n) {
-            LOG_F(INFO, "message from process stderr: %s",
-                  std::string(bytes, n).c_str());
-        });
-    rep.update(job.name, JobStatus::RUNNING, proc.get_id(), -1);
-    auto sta = proc.get_exit_status();
-    rep.update(job.name, sta ? JobStatus::FAILED : JobStatus::WAITING, -1, sta);
-    if (sta) {
+    int sta = 0;
+    std::tie(sta, ec) = proc.wait(reproc::infinite);
+    if (ec) {
+        LOG_F(ERROR, "Job %s failed: %s", job.name.c_str(),
+              ec.message().c_str());
+        rep.update(job.name, JobStatus::FAILED, -1, -1);
+    } else if (sta) {
         LOG_F(ERROR, "Job %s failed with return code %d", job.name.c_str(),
               sta);
+        rep.update(job.name, JobStatus::FAILED, -1, sta);
     } else {
-        LOG_F(INFO, "Job %s finished", job.name.c_str());
+        LOG_F(INFO, "Job %s succeeded", job.name.c_str());
+        rep.update(job.name, JobStatus::WAITING, -1, sta);
     }
 }
 
@@ -90,6 +121,7 @@ int main(int argc, char** argv) {
         std::this_thread::sleep_until(jo.second);
         auto j = jo.first;
 
+        // TODO: Fix tasks limiting
         // cleanup ended tasks
         for (auto it = ts.begin(); it != ts.end();) {
             if (!it->joinable()) {

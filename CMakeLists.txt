@@ -1,28 +1,33 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.14)
 project(wobble)
-
+set(CMAKE_CXX_STANDARD 17)
 include(FetchContent)
 
-set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(argagg)
+
 add_subdirectory(date)
-FetchContent_Declare(json GIT_REPOSITORY
-    https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent
+
+FetchContent_Declare(json
+    GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent
     GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG v3.10.5)
 FetchContent_MakeAvailable(json)
-FetchContent_Declare(fmt GIT_REPOSITORY
-    https://github.com/fmtlib/fmt
+
+FetchContent_Declare(fmt
+    GIT_REPOSITORY https://github.com/fmtlib/fmt
     GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG 8.1.1)
 FetchContent_MakeAvailable(fmt)
+
 add_subdirectory(loguru)
-FetchContent_Declare(proc GIT_REPOSITORY
-    https://gitlab.com/eidheim/tiny-process-library
-    GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG master)
-FetchContent_MakeAvailable(proc)
+
+set(REPROC++ ON)
+FetchContent_Declare(reproc
+    GIT_REPOSITORY https://github.com/DaanDeMeyer/reproc
+    GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG v14.2.4)
+FetchContent_MakeAvailable(reproc)
 
 add_executable(wobble config.cpp job.cpp report.cpp schedule.cpp util.cpp wobble.cpp)
 target_link_libraries(wobble argagg date fmt::fmt
-    nlohmann_json::nlohmann_json loguru tiny-process-library::tiny-process-library)
+    nlohmann_json::nlohmann_json loguru reproc++)
 
 # The following is unnecessary as CMake will link ole32 automatically
 # if(WIN32)
