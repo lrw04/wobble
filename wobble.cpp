@@ -64,6 +64,7 @@ void run_job(Job job, Report& rep) {
     int sta = 0;
     std::tie(sta, ec) = proc.wait(reproc::infinite);
     if (ec) {
+        // TODO: On Windows sometime it goes into this
         LOG_F(ERROR, "Job %s failed: %s", job.name.c_str(),
               ec.message().c_str());
         rep.update(job.name, JobStatus::FAILED, -1, -1);
