@@ -10,7 +10,7 @@ void JobQueue::clear() {
     while (!q.empty()) q.pop();
 }
 
-int JobQueue::size() { return q.size(); }
+std::size_t JobQueue::size() { return q.size(); }
 
 void JobQueue::insert(const Job& j, sctime t) {
     q.push({j, t, std::chrono::milliseconds(rdist(rng))});

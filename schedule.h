@@ -15,7 +15,7 @@ class JobQueue {
    public:
     JobQueue(int cycle);
     void clear();
-    int size();
+    std::size_t size();
     void insert(const Job&, sctime t);
     std::pair<Job, sctime> top() const;
     void pop();
