@@ -3,18 +3,22 @@ project(wobble)
 set(CMAKE_CXX_STANDARD 17)
 include(FetchContent)
 
+Set(FETCHCONTENT_QUIET FALSE)
+
 add_subdirectory(argagg)
 
 add_subdirectory(date)
 
 FetchContent_Declare(json
     GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent
-    GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG v3.10.5)
+    GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG v3.10.5
+    USES_TERMINAL_DOWNLOAD TRUE)
 FetchContent_MakeAvailable(json)
 
 FetchContent_Declare(fmt
     GIT_REPOSITORY https://github.com/fmtlib/fmt
-    GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG 8.1.1)
+    GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG 8.1.1
+    USES_TERMINAL_DOWNLOAD TRUE)
 FetchContent_MakeAvailable(fmt)
 
 add_subdirectory(loguru)
@@ -22,7 +26,8 @@ add_subdirectory(loguru)
 set(REPROC++ ON)
 FetchContent_Declare(reproc
     GIT_REPOSITORY https://github.com/DaanDeMeyer/reproc
-    GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG v14.2.4)
+    GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG v14.2.4
+    USES_TERMINAL_DOWNLOAD TRUE)
 FetchContent_MakeAvailable(reproc)
 
 add_executable(wobble config.cpp job.cpp report.cpp schedule.cpp util.cpp wobble.cpp)
