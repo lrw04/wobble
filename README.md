@@ -27,5 +27,5 @@ and the following will be fetched during configuration:
 - [fmtlib](https://github.com/fmtlib/fmt) 8.1.1 licensed under MIT
 - [nlohmann/json](https://github.com/nlohmann/json) 3.10.5
 licensed under MIT
-- [tiny-process-library](https://gitlab.com/eidheim/tiny-process-library) 2.0.4
+- [reproc](https://github.com/DaanDeMeyer/reproc) 14.2.4
 licensed under MIT

@@ -124,8 +124,8 @@ int main(int argc, char** argv) {
         std::this_thread::sleep_until(jo.second);
         auto j = jo.first;
 
-// TODO: Fix tasks limiting
-// cleanup ended tasks
+        // TODO: Fix tasks limiting
+        // cleanup ended tasks
         for (auto it = ts.begin(); it != ts.end();) {
             if (!it->joinable()) {
                 it = ts.erase(it);
