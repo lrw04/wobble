@@ -17,25 +17,25 @@
 
 class reproc_log_sink {
    public:
-    reproc_log_sink(const std::string& str) : str(str) {}
+    reproc_log_sink(const std::string& job, const std::string& str)
+        : job(job), str(str) {}
     std::error_code operator()(reproc::stream stream, const uint8_t* buffer,
                                std::size_t size) {
         if (size) {
-            LOG_F(INFO, "message from %s: %s", str.c_str(),
-                  std::string(reinterpret_cast<const char*>(buffer),
-                              buffer[size - 1] == '\n' ? size - 1 : size)
+            while (buffer[size - 1] == '\n' || buffer[size - 1] == '\r') size--;
+            LOG_F(INFO, "Message from %s of %s: %s", str.c_str(), job.c_str(),
+                  std::string(reinterpret_cast<const char*>(buffer), size)
                       .c_str());
         }
         return {};
     }
 
    private:
-    std::string str;
+    std::string job, str;
 };
 
 void run_job(Job job, Report& rep) {
     loguru::set_thread_name((job.name + " runner").c_str());
-    LOG_F(INFO, "Started job %s", job.name.c_str());
 
     // run job.exec with argument
     reproc::options op;
@@ -49,12 +49,14 @@ void run_job(Job job, Report& rep) {
     }
     auto ec = proc.start(cmdline, op);
     if (ec == std::errc::no_such_file_or_directory) {
-        LOG_F(ERROR, "Executable for job %s was not found", job.name.c_str());
+        LOG_F(ERROR, "Executable for %s was not found", job.name.c_str());
         rep.update(job.name, JobStatus::NF, -1, -1);
         return;
     }
-    ec = reproc::drain(proc, reproc_log_sink("stdout"),
-                       reproc_log_sink("stderr"));
+    LOG_F(INFO, "Started job %s", job.name.c_str());
+    rep.update(job.name, JobStatus::RUNNING, proc.pid().first, -1);
+    ec = reproc::drain(proc, reproc_log_sink(job.name, "stdout"),
+                       reproc_log_sink(job.name, "stderr"));
     if (ec) {
         LOG_F(ERROR, "Failed to intercept streams: %s", ec.message().c_str());
         rep.update(job.name, JobStatus::FAILED, -1, -1);
