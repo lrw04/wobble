@@ -39,7 +39,8 @@ void run_job(Job job, Report& rep) {
 
     // run job.exec with argument
     reproc::options op;
-    op.working_directory = job.cfg.parent_path().string().c_str();
+    std::string wd = job.cfg.parent_path().string();
+    op.working_directory = wd.c_str();
     reproc::process proc;
     std::vector<std::string> cmdline = {job.exe};
     if (job.use_args) {
@@ -66,7 +67,6 @@ void run_job(Job job, Report& rep) {
     int sta = 0;
     std::tie(sta, ec) = proc.wait(reproc::infinite);
     if (ec) {
-        // TODO: On Windows sometimes it goes into this
         LOG_F(ERROR, "Job %s failed: %s", job.name.c_str(),
               ec.message().c_str());
         rep.update(job.name, JobStatus::FAILED, -1, -1);
@@ -124,8 +124,8 @@ int main(int argc, char** argv) {
         std::this_thread::sleep_until(jo.second);
         auto j = jo.first;
 
-        // TODO: Fix tasks limiting
-        // cleanup ended tasks
+// TODO: Fix tasks limiting
+// cleanup ended tasks
         for (auto it = ts.begin(); it != ts.end();) {
             if (!it->joinable()) {
                 it = ts.erase(it);
