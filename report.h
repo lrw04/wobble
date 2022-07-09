@@ -26,11 +26,15 @@ struct Report {
     std::mutex m;
     std::map<std::string, JobEntry> cont;
     std::chrono::system_clock clk;
+    int nproc, running = 0;
+    std::map<std::string, bool> rn;
 
-    Report(const std::filesystem::path& p);
+    Report(const std::filesystem::path& p, int np);
     void reg(const Job& job);
     void update(const std::string& name, JobStatus st, int p, int ret);
     void clear();
+    void add_running_job(const std::string& name);
+    bool can_run(const std::string& name);
 };
 
 #endif

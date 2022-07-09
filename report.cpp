@@ -13,7 +13,10 @@
 
 using namespace date;
 
-Report::Report(const std::filesystem::path& p) { f = p; }
+Report::Report(const std::filesystem::path& p, int np) {
+    f = p;
+    nproc = np;
+}
 
 void Report::reg(const Job& job) {
     const std::lock_guard<std::mutex> lock(m);
@@ -23,12 +26,17 @@ void Report::reg(const Job& job) {
                 job.cfg.string().c_str());
     }
     cont[job.name] = {job, JobStatus::WAITING, clk.now(), -1};
+    rn[job.name] = false;
 }
 
 void Report::update(const std::string& name, JobStatus st, int p, int ret) {
     const std::lock_guard<std::mutex> lock(m);
     if (!cont.count(name)) {
         ABORT_F("Job not registered: %s", name.c_str());
+    }
+    if (st != JobStatus::RUNNING && cont[name].status == JobStatus::RUNNING) {
+        running--;
+        rn[name] = false;
     }
     cont[name].status = st;
     cont[name].update = clk.now();
@@ -46,4 +54,13 @@ void Report::update(const std::string& name, JobStatus st, int p, int ret) {
         r[k]["update"] = ss.str();
     }
     write_file(f, r.dump() + "\n");
+}
+
+void Report::add_running_job(const std::string& name) {
+    running++;
+    rn[name] = true;
+}
+
+bool Report::can_run(const std::string& name) {
+    return running < nproc && (!rn[name]);
 }

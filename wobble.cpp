@@ -35,6 +35,7 @@ class reproc_log_sink {
 };
 
 void run_job(Job job, Report& rep) {
+    LOG_F(INFO, "Starting %s", job.name.c_str());
     loguru::set_thread_name((job.name + " runner").c_str());
 
     // run job.exec with argument
@@ -54,12 +55,13 @@ void run_job(Job job, Report& rep) {
         rep.update(job.name, JobStatus::NF, -1, -1);
         return;
     }
-    LOG_F(INFO, "Started job %s", job.name.c_str());
+    LOG_F(INFO, "Started %s", job.name.c_str());
     rep.update(job.name, JobStatus::RUNNING, proc.pid().first, -1);
     ec = reproc::drain(proc, reproc_log_sink(job.name, "stdout"),
                        reproc_log_sink(job.name, "stderr"));
     if (ec) {
-        LOG_F(ERROR, "Failed to intercept streams: %s", ec.message().c_str());
+        LOG_F(ERROR, "Failed to intercept streams for %s: %s", job.name.c_str(),
+              ec.message().c_str());
         rep.update(job.name, JobStatus::FAILED, -1, -1);
         return;
     }
@@ -67,15 +69,13 @@ void run_job(Job job, Report& rep) {
     int sta = 0;
     std::tie(sta, ec) = proc.wait(reproc::infinite);
     if (ec) {
-        LOG_F(ERROR, "Job %s failed: %s", job.name.c_str(),
-              ec.message().c_str());
+        LOG_F(ERROR, "%s failed: %s", job.name.c_str(), ec.message().c_str());
         rep.update(job.name, JobStatus::FAILED, -1, -1);
     } else if (sta) {
-        LOG_F(ERROR, "Job %s failed with return code %d", job.name.c_str(),
-              sta);
+        LOG_F(ERROR, "%s failed with return code %d", job.name.c_str(), sta);
         rep.update(job.name, JobStatus::FAILED, -1, sta);
     } else {
-        LOG_F(INFO, "Job %s succeeded", job.name.c_str());
+        LOG_F(INFO, "%s succeeded", job.name.c_str());
         rep.update(job.name, JobStatus::WAITING, -1, sta);
     }
 }
@@ -115,8 +115,7 @@ int main(int argc, char** argv) {
     JobQueue q(cfg.rand);
     for (const auto& j : jobs) q.insert(j, clk.now());
 
-    std::vector<std::thread> ts;
-    Report r(cfg.report);
+    Report r(cfg.report, cfg.nproc);
     for (auto j : jobs) r.reg(j);
 
     while (true) {
@@ -124,24 +123,16 @@ int main(int argc, char** argv) {
         std::this_thread::sleep_until(jo.second);
         auto j = jo.first;
 
-        // TODO: Fix tasks limiting
-        // cleanup ended tasks
-        for (auto it = ts.begin(); it != ts.end();) {
-            if (!it->joinable()) {
-                it = ts.erase(it);
-            } else {
-                it++;
-            }
-        }
         q.reenter();
-        if (ts.size() == (std::size_t)cfg.nproc) {
+        if (!r.can_run(j.name)) {
             // skip
-            LOG_F(INFO, "Skipped job %s", j.name.c_str());
+            LOG_F(INFO, "Skipped %s", j.name.c_str());
             r.update(j.name, JobStatus::SKIPPED, -1, -1);
             continue;
         }
         // run
-        ts.emplace_back(run_job, j, std::ref(r));
-        ts.back().detach();
+        std::thread t(run_job, j, std::ref(r));
+        r.add_running_job(j.name);
+        t.detach();
     }
 }
