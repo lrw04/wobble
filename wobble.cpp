@@ -81,8 +81,6 @@ void run_job(Job job, Report& rep) {
 }
 
 int main(int argc, char** argv) {
-    // TODO: graceful exit
-
     loguru::init(argc, argv);
     argagg::parser arg{{}};
     argagg::parser_results argr;
