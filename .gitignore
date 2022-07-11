@@ -39,3 +39,7 @@
 
 # Test config
 /test_config
+
+# Test output
+/test/config/logs.log
+/test/config/rep.json
