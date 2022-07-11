@@ -1,0 +1,9 @@
+{
+    "exe": "python",
+    "cycle": 7,
+    "name": "job3",
+    "args": [
+        "inc.py",
+        "job3.out"
+    ]
+}

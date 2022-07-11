@@ -1,0 +1,18 @@
+{
+    "nproc": 2,
+    "report": "rep.json",
+    "rand": 500,
+    "jobs": [
+        "job1.json",
+        "job2.json",
+        "job3.json",
+        "subdir/job4.json"
+    ],
+    "logs": {
+        "enable_file": true,
+        "path": "logs.log",
+        "verbosity": "info",
+        "enable_syslog": false,
+        "syslog_name": "test"
+    }
+}
