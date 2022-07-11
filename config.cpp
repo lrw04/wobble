@@ -30,12 +30,16 @@ Config Config::from_file(const std::filesystem::path& f) {
         if (res.do_log_file) {
             res.logs = std::filesystem::path(f.parent_path() /
                                              r.at("logs").at("path"));
-            std::string verbosity = r.at("logs").at("verbosity");
-            res.verbosity = stov[verbosity];
         }
         res.do_syslog = r.at("logs").at("enable_syslog");
         if (res.do_syslog) {
             res.syslog_name = r.at("logs").at("syslog_name");
+        }
+        if (res.do_log_file || res.do_syslog) {
+            std::string verbosity = r.at("logs").at("verbosity");
+            if (!stov.count(verbosity))
+                ABORT_F("Invalid verbosity: %s", verbosity.c_str());
+            res.verbosity = stov[verbosity];
         }
         res.rand = r.value("rand", 0);
         for (auto j : r.at("jobs")) {
