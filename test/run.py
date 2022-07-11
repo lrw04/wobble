@@ -24,3 +24,4 @@ for i in range(1, 5):
     if abs(exp - cur) / exp > tolerance:
         print(f"job{i}.out: {cur}, job{i}.exp: {exp}")
         exit(1)
+print("success")
