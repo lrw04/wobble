@@ -9,7 +9,7 @@ struct Job {
     std::string exe;
     std::filesystem::path cfg;
     std::string name;
-    int cycle;
+    int cycle, delay;
     std::vector<std::string> args;
     bool use_args;
     static Job from_file(const std::filesystem::path& c);

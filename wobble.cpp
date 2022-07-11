@@ -111,7 +111,8 @@ int main(int argc, char** argv) {
     for (auto j : cfg.jobs) jobs.push_back(Job::from_file(j));
     std::chrono::steady_clock clk;
     JobQueue q(cfg.rand);
-    for (const auto& j : jobs) q.insert(j, clk.now());
+    for (const auto& j : jobs)
+        q.insert(j, clk.now() + std::chrono::seconds(j.delay));
 
     Report r(cfg.report, cfg.nproc);
     for (auto j : jobs) r.reg(j);

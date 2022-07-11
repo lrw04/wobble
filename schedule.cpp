@@ -3,7 +3,7 @@
 JobQueue::JobQueue(int cycle) {
     c = cycle;
     rng.seed(rd());
-    rdist = std::uniform_int_distribution<int>(0, c * 1000);
+    rdist = std::uniform_int_distribution<int>(0, c);
 }
 
 void JobQueue::clear() {

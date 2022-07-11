@@ -27,6 +27,7 @@ Job Job::from_file(const std::filesystem::path& c) {
         }
         res.name = r.at("name");
         res.cycle = r.at("cycle");
+        res.delay = r.value("delay", 0);
         res.use_args = false;
         if (r.contains("args")) {
             CHECK_F(r.at("args").is_array(), "Expected array 'args'");
