@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 
 cfg = Path(argv[2])
-tolerance = 0.05
+tolerance = 0.2
 
 for i in range(1, 5):
     (cfg / f"job{i}.out").unlink(missing_ok=True)
