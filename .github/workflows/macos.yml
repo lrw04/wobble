@@ -7,7 +7,7 @@ on:
 env:
   BUILD_TYPE: Release
 jobs:
-  build:
+  build-and-test:
     runs-on: macos-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[ci skip]')"
     steps:
@@ -16,3 +16,7 @@ jobs:
         run: cmake -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE
       - name: build
         run: cmake --build build --config $BUILD_TYPE -j4
+      - name: test
+        run: |
+          cd test
+          python run.py ../build/wobble config 100
