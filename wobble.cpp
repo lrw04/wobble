@@ -35,8 +35,8 @@ class reproc_log_sink {
 };
 
 void run_job(Job job, Report& rep) {
-    LOG_F(INFO, "Starting %s", job.name.c_str());
     loguru::set_thread_name((job.name + " runner").c_str());
+    LOG_F(INFO, "Starting %s", job.name.c_str());
 
     // run job.exec with argument
     reproc::options op;
