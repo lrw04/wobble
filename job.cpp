@@ -25,14 +25,24 @@ Job Job::from_file(const std::filesystem::path& c) {
         } else {
             res.exe = r.at("exe");
         }
+        CHECK_F(r.contains("name") && r.at("name").is_string(),
+                "'name' is missing or not a string");
         res.name = r.at("name");
+        CHECK_F(r.contains("cycle") && r.at("cycle").is_number_unsigned(),
+                "'cycle' is missing or not an unsigned integer");
         res.cycle = r.at("cycle");
+        CHECK_F((!r.contains("delay")) || r.at("delay").is_number_unsigned(),
+                "'delay' is not an unsigned integer");
         res.delay = r.value("delay", 0);
         res.use_args = false;
         if (r.contains("args")) {
             CHECK_F(r.at("args").is_array(), "Expected array 'args'");
             res.use_args = true;
-            for (const auto& arg : r.at("args")) res.args.push_back(arg);
+            for (const auto& arg : r.at("args")) {
+                CHECK_F(arg.is_string(),
+                        "Expected string for every args entry");
+                res.args.push_back(arg);
+            }
         }
     } catch (const nlohmann::json::basic_json::out_of_range& e) {
         ABORT_F("Invalid job configuration: %s", e.what());
