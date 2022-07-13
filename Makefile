@@ -9,4 +9,7 @@ configure:
 clean:
 	rm -rf build
 
-.PHONY: all configure clean
+lc:
+	cloc --exclude-dir=argagg,build,date,loguru,.vscode --exclude-lang=JSON,Expect .
+
+.PHONY: all configure clean lc
