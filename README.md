@@ -90,8 +90,6 @@ The program is licensed under the MIT License. The codebase also includes these
 opensource projects in-tree:
 
 - [argagg](https://github.com/vietjtnguyen/argagg) 0.4.6 in /argagg licensed under MIT
-- [date.h](https://github.com/HowardHinnant/date) 3.0.1 in /date
-licensed under MIT
 - [loguru](https://github.com/emilk/loguru) master in /loguru
 in public domain, changed
 
