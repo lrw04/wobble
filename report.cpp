@@ -1,7 +1,5 @@
 #include "report.h"
 
-#include <date/date.h>
-#include <date/tz.h>
 #include <fmt/format.h>
 
 #include <loguru.hpp>
@@ -10,8 +8,6 @@
 #include <stdexcept>
 
 #include "util.h"
-
-using namespace date;
 
 Report::Report(const std::filesystem::path& p, int np) {
     f = p;
@@ -49,9 +45,9 @@ void Report::update(const std::string& name, JobStatus st, int p, int ret) {
         r[k]["status"] = status_str[cont[k].status];
         r[k]["pid"] = cont[k].pid;
         r[k]["return_code"] = cont[k].ret;
-        std::stringstream ss;
-        ss << date::make_zoned(date::current_zone(), cont[k].update);
-        r[k]["update"] = ss.str();
+        r[k]["update"] = std::chrono::round<std::chrono::milliseconds>(
+                             cont[k].update.time_since_epoch())
+                             .count();
     }
     write_file(f, r.dump() + "\n");
 }

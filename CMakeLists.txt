@@ -7,8 +7,6 @@ Set(FETCHCONTENT_QUIET FALSE)
 
 add_subdirectory(argagg)
 
-add_subdirectory(date)
-
 FetchContent_Declare(json
     GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent
     GIT_PROGRESS TRUE GIT_SHALLOW TRUE GIT_TAG v3.10.5
@@ -31,8 +29,7 @@ FetchContent_Declare(reproc
 FetchContent_MakeAvailable(reproc)
 
 add_executable(wobble config.cpp job.cpp report.cpp schedule.cpp util.cpp wobble.cpp)
-target_link_libraries(wobble argagg date fmt::fmt
-    nlohmann_json::nlohmann_json loguru reproc++)
+target_link_libraries(wobble argagg fmt::fmt nlohmann_json::nlohmann_json loguru reproc++)
 
 # The following is unnecessary as CMake will link ole32 automatically
 # if(WIN32)

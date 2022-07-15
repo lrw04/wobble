@@ -1,6 +1,0 @@
-add_library(date STATIC tz.cpp)
-target_include_directories(date PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-if(UNIX)
-    find_package(CURL REQUIRED)
-    target_link_libraries(date PRIVATE CURL::libcurl)
-endif(UNIX)

@@ -7,15 +7,6 @@ supposed to work on Windows (MinGW64) and POSIX.
 
 ## Installation
 
-On Windows, the program requires the [IANA timezone database](https://www.iana.org/time-zones)
-to be installed in ~/Downloads with timezone mapping from
-[Unicode CLDR](https://cldr.unicode.org/index/downloads). The repository includes
-it in /tzdata.zip, so you can run the following in PowerShell under the root to install:
-
-```powershell
-Expand-Archive tzdata.zip -DestinationPath $HOME\Downloads\tzdata
-```
-
 Binaries for Windows will be published for releases. To run wobble on POSIX, you will
 need to compile it from source:
 

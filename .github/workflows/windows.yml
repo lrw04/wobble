@@ -12,8 +12,6 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[ci skip]')"
     steps:
       - uses: actions/checkout@v2
-      - name: install tzdata
-        run: Expand-Archive tzdata.zip -DestinationPath $HOME\Downloads\tzdata
       - name: configure
         run: cmake -B build -DCMAKE_BUILD_TYPE="$env:BUILD_TYPE"
       - name: build
