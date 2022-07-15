@@ -1,7 +1,3 @@
-#ifdef _WIN32
-#include <share.h>
-#endif
-
 #if defined(__GNUC__) || defined(__clang__)
 // Disable all warnings from gcc/clang:
 #pragma GCC diagnostic push
@@ -1080,6 +1076,8 @@ namespace loguru
 			} else {
 				buffer[0] = 0;
 			}
+		#elif defined(__OpenBSD__)
+			pthread_get_name_np(pthread_self(), buffer, length);
 		#elif LOGURU_PTHREADS
 			// Ask the OS about the thread name.
 			// This is what we *want* to do on all platforms, but
@@ -1104,6 +1102,8 @@ namespace loguru
 			#elif defined(__FreeBSD__)
 				long thread_id;
 				(void)thr_self(&thread_id);
+			#elif defined(__OpenBSD__)
+				uintptr_t thread_id = reinterpret_cast<uintptr_t>(pthread_self());
 			#elif LOGURU_PTHREADS
 				uint64_t thread_id = pthread_self();
 			#else

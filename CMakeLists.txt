@@ -35,6 +35,6 @@ target_link_libraries(wobble argagg fmt::fmt nlohmann_json::nlohmann_json loguru
 # if(WIN32)
 # target_link_libraries(wobble ole32)
 # endif(WIN32)
-if(UNIX)
+if(CMAKE_SYSTEM_NAME EQUAL Linux)
     target_link_libraries(wobble dl)
-endif(UNIX)
+endif()
